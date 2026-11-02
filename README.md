@@ -13,6 +13,8 @@ Designed specifically for local retail and quick-commerce operations, featuring 
 - **Store Location:** Law Gate, LPU, Phagwara, Punjab - 144411
 - **Support Contact:** +91 98765 43210 | support@apnamart.in
 - **Currency:** Indian Rupee (₹)
+- **🌐 Live Storefront:** [https://mdkamarrzakhan.pythonanywhere.com](https://mdkamarrzakhan.pythonanywhere.com)
+- **🔐 Live Admin Panel:** [https://mdkamarrzakhan.pythonanywhere.com/admin/](https://mdkamarrzakhan.pythonanywhere.com/admin/)
 
 ---
 

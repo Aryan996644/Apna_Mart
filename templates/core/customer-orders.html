@@ -1,0 +1,123 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}My Orders - Apna Mart{% endblock title %}
+
+{% block content %}
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{% static 'assets/img/breadcrumb.jpg' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>My Orders</h2>
+                    <div class="breadcrumb__option">
+                        <a href="{% url 'core:index' %}">Home</a>
+                        <span class="breadcrumb__separator"><i class="fa fa-angle-right"></i></span>
+                        <a href="{% url 'userauths:account' %}">Account</a>
+                        <span class="breadcrumb__separator"><i class="fa fa-angle-right"></i></span>
+                        <span>My Orders</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Orders Section Begin -->
+<section class="customer-orders spad" style="padding: 60px 0;">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="font-weight-bold">Order History</h3>
+                    <a href="{% url 'core:products-list' %}" class="btn btn-outline-success">
+                        <i class="fa fa-shopping-basket mr-1"></i> Order More Items
+                    </a>
+                </div>
+
+                {% if orders %}
+                <div class="table-responsive bg-white shadow-sm rounded">
+                    <table class="table table-hover mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total Amount</th>
+                                <th>Payment</th>
+                                <th>Order Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td class="align-middle font-weight-bold" style="color: #7fad39;">
+                                    #{{ order.oid|upper }}
+                                </td>
+                                <td class="align-middle text-muted">
+                                    {{ order.order_date|date:"d M, Y" }}
+                                </td>
+                                <td class="align-middle">
+                                    {{ order.order_items.count }} item{{ order.order_items.count|pluralize }}
+                                </td>
+                                <td class="align-middle font-weight-bold">
+                                    ₹{{ order.price|floatformat:2 }}
+                                </td>
+                                <td class="align-middle">
+                                    <span class="badge {% if order.paid_status %}badge-success{% else %}badge-info{% endif %} px-2 py-1">
+                                        {{ order.payment_method }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    {% if order.product_status == 'delivered' %}
+                                    <span class="badge badge-success px-2 py-1">Delivered</span>
+                                    {% elif order.product_status == 'shipped' %}
+                                    <span class="badge badge-primary px-2 py-1">Shipped</span>
+                                    {% else %}
+                                    <span class="badge badge-warning px-2 py-1">Processing</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle text-center">
+                                    <a href="{% url 'core:order-completed' order.oid %}" class="btn btn-sm btn-outline-dark">
+                                        <i class="fa fa-eye"></i> View Invoice
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 bg-white shadow-sm rounded">
+                    <div style="font-size: 55px; color: #ccc;" class="mb-3">
+                        <i class="fa fa-shopping-bag"></i>
+                    </div>
+                    <h4>No Orders Yet!</h4>
+                    <p class="text-muted">You haven't placed any orders with us so far.</p>
+                    <a href="{% url 'core:products-list' %}" class="site-btn mt-2">
+                        Start Shopping Now
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Orders Section End -->
+
+{% endblock content %}

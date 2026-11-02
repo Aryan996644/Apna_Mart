@@ -1,0 +1,134 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmed - #{{ order.oid }}{% endblock title %}
+
+{% block content %}
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{% static 'assets/img/breadcrumb.jpg' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Order Confirmation</h2>
+                    <div class="breadcrumb__option">
+                        <a href="{% url 'core:index' %}">Home</a>
+                        <span class="breadcrumb__separator"><i class="fa fa-angle-right"></i></span>
+                        <span>Order Received</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Order Success Section Begin -->
+<section class="order-success spad" style="padding: 70px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header text-center py-4" style="background: #e8f5e9; border: none;">
+                        <div style="width: 70px; height: 70px; background: #28a745; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 15px;">
+                            <i class="fa fa-check"></i>
+                        </div>
+                        <h3 class="font-weight-bold" style="color: #2e7d32;">Order Placed Successfully!</h3>
+                        <p class="mb-0 text-muted">Thank you, <strong>{{ order.full_name }}</strong>. Your order has been placed and is now being processed.</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row mb-4 p-3" style="background: #fbfbfb; border-radius: 8px; border: 1px dashed #d5d5d5;">
+                            <div class="col-sm-6 col-md-3 mb-3 mb-md-0 text-center">
+                                <small class="text-muted d-block">Order Number</small>
+                                <strong style="color: #7fad39; font-size: 15px;">#{{ order.oid|upper }}</strong>
+                            </div>
+                            <div class="col-sm-6 col-md-3 mb-3 mb-md-0 text-center">
+                                <small class="text-muted d-block">Date</small>
+                                <strong>{{ order.order_date|date:"d M, Y" }}</strong>
+                            </div>
+                            <div class="col-sm-6 col-md-3 mb-3 mb-md-0 text-center">
+                                <small class="text-muted d-block">Payment Method</small>
+                                <strong>{{ order.payment_method }}</strong>
+                            </div>
+                            <div class="col-sm-6 col-md-3 text-center">
+                                <small class="text-muted d-block">Status</small>
+                                {% if order.product_status == 'delivered' %}
+                                <span class="badge badge-success px-2 py-1" style="font-size: 13px;">Delivered</span>
+                                {% elif order.product_status == 'shipped' %}
+                                <span class="badge badge-primary px-2 py-1" style="font-size: 13px;">Shipped</span>
+                                {% else %}
+                                <span class="badge badge-warning px-2 py-1" style="font-size: 13px;">Processing</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <h5 class="font-weight-bold mb-3" style="border-bottom: 2px solid #7fad39; padding-bottom: 8px;">Order Details</h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-right">Price</th>
+                                        <th class="text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.image %}
+                                                <img src="{{ item.image }}" alt="{{ item.item }}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; margin-right: 12px;">
+                                                {% endif %}
+                                                <strong>{{ item.item }}</strong>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">{{ item.qty }}</td>
+                                        <td class="text-right">₹{{ item.price|floatformat:2 }}</td>
+                                        <td class="text-right font-weight-bold">₹{{ item.total|floatformat:2 }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td colspan="3" class="text-right text-muted">Subtotal:</td>
+                                        <td class="text-right">₹{{ subtotal|floatformat:2 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-right text-muted">Delivery Fee:</td>
+                                        <td class="text-right text-success font-weight-bold">
+                                            {% if shipping_fee == 0 %}FREE{% else %}₹{{ shipping_fee|floatformat:2 }}{% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 17px; background: #fafafa;">
+                                        <td colspan="3" class="text-right font-weight-bold">Grand Total:</td>
+                                        <td class="text-right font-weight-bold" style="color: #7fad39;">₹{{ order.price|floatformat:2 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="p-3 mb-4" style="background: #f8f9fa; border-radius: 8px;">
+                            <h6 class="font-weight-bold mb-2"><i class="fa fa-map-marker text-danger mr-2"></i>Delivery Address:</h6>
+                            <p class="mb-1"><strong>{{ order.full_name }}</strong> (Phone: {{ order.phone }})</p>
+                            <p class="mb-0 text-muted">{{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+                        </div>
+
+                        <div class="text-center pt-3">
+                            <a href="{% url 'core:customer-orders' %}" class="btn btn-outline-success mr-2 mb-2 px-4 py-2">
+                                <i class="fa fa-list mr-1"></i> View My Orders
+                            </a>
+                            <a href="{% url 'core:index' %}" class="site-btn mb-2 px-4 py-2">
+                                <i class="fa fa-shopping-bag mr-1"></i> Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Order Success Section End -->
+
+{% endblock content %}
